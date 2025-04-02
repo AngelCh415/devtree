@@ -1,0 +1,14 @@
+{
+  "name": "devtree",
+  "version": "1.0.0",
+  "description": "Primer proyecto",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --watch index.js"
+  },
+  "author": "Angel Chavez",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
