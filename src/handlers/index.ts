@@ -1,4 +1,5 @@
 import type{ Request, Response } from 'express'
+import slug from 'slug'
 import User from "../models/User"
 import { hashPassword } from '../utils/auth'
 
@@ -13,7 +14,15 @@ export const createAccount = async (req: Request, res: Response) => {
         })
     }else {
         const user = new User(req.body)
+        const handle = slug(req.body.handle,'')
+        const handleExists = await User.findOne({handle})
+        if(handleExists) {
+            res.status(409).json({
+                message: 'Handle not available',
+            })
+        }
         user.password = await hashPassword(password)
+        user.handle = handle
         await user.save()
 
         /*

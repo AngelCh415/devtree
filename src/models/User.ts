@@ -1,12 +1,20 @@
 import mongoose, { Schema } from "mongoose"
 
 export interface IUser {
+    handle: string
     name: string
     email: string
     password: string
 }
 // Define the User schema
 const userSchema = new Schema({
+    handle: {
+        type: String,
+        require: true,
+        trim: true,
+        unique: true,
+        lowercase: true,
+    },
     name: {
         type: String,
         require: true,
@@ -17,6 +25,7 @@ const userSchema = new Schema({
         require: true,
         unique: true,
         trim: true,
+        lowercase: true,
     },
     password: {
         type: String,
