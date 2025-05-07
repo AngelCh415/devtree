@@ -2,6 +2,9 @@ import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form';
 import ErrorMessage from '../components/ErrorMessage';
 import { LoginForm } from '../types';
+import api from '../config/axios';
+import { toast } from 'sonner';
+import { isAxiosError } from 'axios';
 export default function LoginView() {
 
     const initialValues: LoginForm = {
@@ -10,8 +13,18 @@ export default function LoginView() {
     }
     const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: initialValues });
 
-    const handleLogin = (formData: LoginForm) => {
-        console.log(formData);
+    const handleLogin = async (formData: LoginForm) => {
+        try {
+            const { data } = await api.post(`/auth/login`, formData)
+            toast.success(data.message)
+        } catch (error) {
+            if (isAxiosError(error)) {
+                toast.error(error.response?.data.message)
+            } else {
+                console.log(error)
+
+            }
+        }
     }
     return (
         <>
