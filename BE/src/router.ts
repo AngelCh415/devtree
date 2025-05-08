@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { body } from 'express-validator'
 import { createAccount, getUser, login } from './handlers'
 import { handleInputErrors } from './middleware/validation'
+import { checkAuth } from './middleware/auth'
 
 const router = Router()
 
@@ -23,6 +24,6 @@ router.post('/auth/login',
 )
 
 // Routing - Get
-router.get('/user', getUser)
+router.get('/user', checkAuth, getUser)
 
 export default router
