@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { body } from 'express-validator'
-import { createAccount, getUser, login, updateProfile } from './handlers'
+import { createAccount, getUser, login, updateProfile, uploadImage } from './handlers'
 import { handleInputErrors } from './middleware/validation'
 import { checkAuth } from './middleware/auth'
 
@@ -32,5 +32,8 @@ router.patch('/user',
     handleInputErrors,
     checkAuth, 
     updateProfile)
+
+// Routing image
+router.post('/user/image', checkAuth, uploadImage)
 
 export default router

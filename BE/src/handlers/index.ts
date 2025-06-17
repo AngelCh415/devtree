@@ -1,8 +1,10 @@
 import type { Request, Response } from 'express'
 import slug from 'slug'
+import formidable from 'formidable'
 import User from "../models/User"
 import { checkPassword, hashPassword } from '../utils/auth'
 import { generateJWT } from '../utils/jwt'
+import cloudinary from '../config/cloudinary'
 
 export const createAccount = async (req: Request, res: Response) => {
     const { email, password } = req.body
@@ -87,6 +89,32 @@ export const updateProfile = async (req: Request, res: Response) => {
 
     }catch (e) {
         const error = new Error('Error updating profile')
+        res.status(500).json({
+            message: error.message,
+        })
+    }
+}
+
+export const uploadImage = async (req: Request, res: Response) => {
+    const form = formidable({ multiples: false})
+   
+    try{
+        form.parse(req, (error, fields, files)=> {
+            cloudinary.uploader.upload(files.file[0].filepath, {}, 
+                async function(error, result) {
+                    if (error){
+                        const error = new Error('Error uploading image')
+                        return res.status(500).json({
+                            message: error.message,
+                        })
+                    }
+                    if (result){
+                        console.log(result.secure_url)
+                    }
+            })
+        })
+    }catch (e) {
+        const error = new Error('Error updating image profile')
         res.status(500).json({
             message: error.message,
         })
