@@ -68,8 +68,23 @@ export const getUser = async (req: Request, res: Response) => {
 
 export const updateProfile = async (req: Request, res: Response) => {
     try{
-        console.log(req.body)
-        
+        const {description} = req.body
+        const handle = slug(req.body.handle, '')
+        const handleExists = await User.findOne({ handle })
+        if (handleExists && handleExists.email !== req.user.email) {
+            res.status(409).json({
+                message: 'Handle not available',
+            })
+        }
+
+        // Update user
+        req.user.description = description
+        req.user.handle = handle
+        await req.user.save()
+        res.status(200).json({
+            message: 'Profile updated successfully',
+        })
+
     }catch (e) {
         const error = new Error('Error updating profile')
         res.status(500).json({
