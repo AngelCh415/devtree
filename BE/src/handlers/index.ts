@@ -65,3 +65,15 @@ export const login = async (req: Request, res: Response) => {
 export const getUser = async (req: Request, res: Response) => {
     res.json(req.user)
 }
+
+export const updateProfile = async (req: Request, res: Response) => {
+    try{
+        console.log(req.body)
+        
+    }catch (e) {
+        const error = new Error('Error updating profile')
+        res.status(500).json({
+            message: error.message,
+        })
+    }
+}
