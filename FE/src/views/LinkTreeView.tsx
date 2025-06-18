@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { social } from "../data/social";
 import DevTreeInput from "../components/DevTreeInput";
 import { isValidUrl } from "../utils";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateProfile } from "../api/DevTreeApi";
-import { User } from "../types";
+import { SocialNetwork, User } from "../types";
 
 export default function LinkTreeView() {
     const [devTreeLinks, setDevTreeLinks] = useState(social);
@@ -23,6 +23,21 @@ export default function LinkTreeView() {
             toast.error(`Error updating profile: ${error.message}`);
         }
     })
+
+    useEffect(() => {
+        const updatedData = devTreeLinks.map( item => {
+            const userLink = JSON.parse(user.links).find((link: SocialNetwork) => link.name === item.name);
+            if (userLink) {
+                return {
+                    ...item,
+                    url: userLink.url,
+                    enabled: userLink.enabled
+                };
+            }
+            return item;
+        })
+        setDevTreeLinks(updatedData);
+    }, []);
 
     const handelUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const updatedLinks = devTreeLinks.map(link => 
@@ -53,6 +68,12 @@ export default function LinkTreeView() {
            
         );
         setDevTreeLinks(updatedLinks);
+        queryClient.setQueryData(['user'], (prevData: User) => {
+            return {
+                ...prevData,
+                links: JSON.stringify(updatedLinks)
+            }
+        });
     }
     return (
             <div className="space-y-5">
